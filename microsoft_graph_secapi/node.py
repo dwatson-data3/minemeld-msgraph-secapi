@@ -406,7 +406,9 @@ class Output(ActorBaseFT):
                 indicators = [str(i) for i in ipset ]
             else:
                 indicators = [str(i) for i in r ]
-                
+        elif: type_ == 'IPv4' and '/' in indicator:
+                ipset = netaddr.IPSet(indicator)
+                indicators = [str(i) for i in ipset ]
         else:
             indicators = [indicator]
 
