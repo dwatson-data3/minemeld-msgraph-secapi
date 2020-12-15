@@ -406,7 +406,7 @@ class Output(ActorBaseFT):
                 indicators = [str(i) for i in ipset ]
             else:
                 indicators = [str(i) for i in r ]
-        if type_ == 'IPv4' and '/' in indicator self.target_product == 'Microsoft Defender ATP':
+        if type_ == 'IPv4' and '/' in indicator and self.target_product == 'Microsoft Defender ATP':
                 ipset = netaddr.IPSet(indicator)
                 indicators = [str(i) for i in ipset ]
         else:
