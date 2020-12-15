@@ -401,7 +401,12 @@ class Output(ActorBaseFT):
         if type_ == 'IPv4' and '-' in indicator:
             a1, a2 = indicator.split('-', 1)
             r = netaddr.IPRange(a1, a2).cidrs()
-            indicators = [str(i) for i in r ]
+            if self.target_product == "Microsoft Defender ATP":
+                ipset = netaddr.IPSet(r)
+                indicators = [str(i) for i in ipset ]
+            else:
+                indicators = [str(i) for i in r ]
+                
         else:
             indicators = [indicator]
 
