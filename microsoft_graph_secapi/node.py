@@ -391,7 +391,7 @@ class Output(ActorBaseFT):
             type_,
             ', '.join(value['sources'])
         )
-        #external_id = '{}:{}'.format(type_, indicator)
+        external_id = '{}:{}'.format(type_, indicator)
         expiration = datetime.utcnow() + timedelta(days=29)
         if expired:
             expiration = datetime.fromtimestamp(0)
@@ -439,11 +439,14 @@ class Output(ActorBaseFT):
                 r['fileHashType'] = HASH_2_ISG[type_]
                 r['fileHashValue'] = i
             elif type_ == 'IPv4':
-                parsed = netaddr.IPNetwork(i)
-                if parsed.size == 1 and '/' not in i:
+                if self.target_product == 'Microsoft Defender ATP':
                     r['networkDestinationIPv4'] = i
-                else:
-                    r['networkCidrBlock'] = i
+                else: 
+                    parsed = netaddr.IPNetwork(i)
+                    if parsed.size == 1 and '/' not in i:
+                        r['networkDestinationIPv4'] = i
+                    else:
+                        r['networkCidrBlock'] = i
             else:
                 # Unsupported indicator type, should never reach this code
                 continue
