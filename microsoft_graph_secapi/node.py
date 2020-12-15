@@ -439,6 +439,7 @@ class Output(ActorBaseFT):
                 r['fileHashType'] = HASH_2_ISG[type_]
                 r['fileHashValue'] = i
             elif type_ == 'IPv4':
+                LOG.debub('DWLOG: Indicator: %s' , i)
                 if self.target_product == 'Microsoft Defender ATP':
                     r['networkDestinationIPv4'] = i
                 else: 
