@@ -433,7 +433,7 @@ class Output(ActorBaseFT):
             elif type_ == 'IPv4':
                 parsed = netaddr.IPNetwork(i)
                 if parsed.size == 1 and '/' not in i:
-                    r['networkIPv4'] = i
+                    r['networkDestinationIPv4'] = i
                 else:
                     r['networkCidrBlock'] = i
             else:
