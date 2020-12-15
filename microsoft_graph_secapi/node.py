@@ -391,7 +391,7 @@ class Output(ActorBaseFT):
             type_,
             ', '.join(value['sources'])
         )
-        external_id = '{}:{}'.format(type_, indicator)
+        #external_id = '{}:{}'.format(type_, indicator)
         expiration = datetime.utcnow() + timedelta(days=29)
         if expired:
             expiration = datetime.fromtimestamp(0)
@@ -414,6 +414,7 @@ class Output(ActorBaseFT):
 
         result = []
         for i in indicators:
+            external_id = '{}:{}'.format(type_, i)
             r = {
                 'description': description,
                 'confidence': value['confidence'],
