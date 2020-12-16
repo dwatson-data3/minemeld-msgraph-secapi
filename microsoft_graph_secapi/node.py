@@ -391,34 +391,45 @@ class Output(ActorBaseFT):
             type_,
             ', '.join(value['sources'])
         )
-        external_id = '{}:{}'.format(type_, indicator)
+        ## move external_id to result section to allow for split of IP ranges
+        ## required for Microsoft Defender ATP
+        #external_id = '{}:{}'.format(type_, indicator)
+
+        if 'Defender' in self.target_product:
+            target = 'ATP'
+        elif 'Sentinel' in self.target_product:
+            target = 'AzS'
+        else:
+            target = 'unk'
+
         expiration = datetime.utcnow() + timedelta(days=29)
         if expired:
             expiration = datetime.fromtimestamp(0)
         expiration = expiration.isoformat()
 
         indicators = []
-        if type_ == 'IPv4' and '-' in indicator:
+        if type_ == 'IPv4' and '-' in indicator and 'Defender' in self.target_product:
             a1, a2 = indicator.split('-', 1)
             r = netaddr.IPRange(a1, a2).cidrs()
-            if self.target_product == 'Microsoft Defender ATP':
-                ipset = netaddr.IPSet([str(i) for i in r ])
-                indicators = [str(i) for i in ipset ]
-                LOG.info('DWLOG2: Indicators: %s Target: %s', indicators, self.target_product)
-            else:
-                indicators = [str(i) for i in r ]
-                LOG.info('DWLOG2: Indicators: %s Target: %s', indicators, self.target_product)
-        elif type_ == 'IPv4' and '/' in indicator and self.target_product == 'Microsoft Defender ATP':
+            ipset = netaddr.IPSet([str(i) for i in r ])
+            indicators = [str(i) for i in ipset ]
+            LOG.info('DWLOG2: ATP range Indicators: %s Target: %s', indicators, self.target_product)
+        elif type_ == 'IPv4' and '-' in indicator and 'Defender' not in self.target_product:
+            a1, a2 = indicator.split('-', 1)
+            r = netaddr.IPRange(a1, a2).cidrs()
+            indicators = [str(i) for i in r ]
+            LOG.info('DWLOG2: Sentinel Indicators: %s Target: %s', indicators, self.target_product)
+        elif type_ == 'IPv4' and '/' in indicator and 'Defender' in self.target_product:
                 ipset = netaddr.IPSet(indicator)
                 indicators = [str(i) for i in ipset ]
-                LOG.info('DWLOG2: Indicators: %s ', indicators)
+                LOG.info('DWLOG2: ATP cidr Indicators: %s ', indicators)
         else:
             indicators = [indicator]
-            LOG.info('DWLOG3: Indicators: %s Target: %s', indicators, self.target_product)
+            LOG.info('DWLOG3: Sentinel other Indicators: %s Target: %s', indicators, self.target_product)
 
         result = []
         for i in indicators:
-            external_id = '{}:{}'.format(type_, i)
+            external_id = '{}:{}:{}'.format(type_, target, i)
             r = {
                 'description': description,
                 'confidence': value['confidence'],
@@ -443,13 +454,13 @@ class Output(ActorBaseFT):
                 r['fileHashType'] = HASH_2_ISG[type_]
                 r['fileHashValue'] = i
             elif type_ == 'IPv4':
-                LOG.info('DWLOG: Indicator: %s Target: %s', indicators, self.target_product)
-                if self.target_product == 'Microsoft Defender ATP':
-                    r['networkDestinationIPv4'] = i
+                LOG.info('DWLOG: return Indicator: %s Target: %s', i, self.target_product)
+                if 'Defender' in self.target_product:
+                    r['networkIPv4'] = i
                 else: 
                     parsed = netaddr.IPNetwork(i)
                     if parsed.size == 1 and '/' not in i:
-                        r['networkDestinationIPv4'] = i
+                        r['networkIPv4'] = i
                     else:
                         r['networkCidrBlock'] = i
             else:
