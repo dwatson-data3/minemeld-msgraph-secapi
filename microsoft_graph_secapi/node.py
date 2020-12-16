@@ -404,13 +404,17 @@ class Output(ActorBaseFT):
             if self.target_product == 'Microsoft Defender ATP':
                 ipset = netaddr.IPSet([str(i) for i in r ])
                 indicators = [str(i) for i in ipset ]
+                LOG.info('DWLOG2: Indicators: %s ', indicators)
             else:
                 indicators = [str(i) for i in r ]
+                LOG.info('DWLOG2: Indicators: %s ', indicators)
         if type_ == 'IPv4' and '/' in indicator and self.target_product == 'Microsoft Defender ATP':
                 ipset = netaddr.IPSet(indicator)
                 indicators = [str(i) for i in ipset ]
+                LOG.info('DWLOG2: Indicators: %s ', indicators)
         else:
             indicators = [indicator]
+            LOG.info('DWLOG3: Indicators: %s ', indicators)
 
         result = []
         for i in indicators:
