@@ -456,7 +456,7 @@ class Output(ActorBaseFT):
             elif type_ == 'IPv4':
                 LOG.info('DWLOG: return Indicator: %s Target: %s', i, self.target_product)
                 if 'Defender' in self.target_product:
-                    r['networkIPv4'] = i
+                    r['networkDestinationIPv4'] = i
                 else: 
                     parsed = netaddr.IPNetwork(i)
                     if parsed.size == 1 and '/' not in i:
