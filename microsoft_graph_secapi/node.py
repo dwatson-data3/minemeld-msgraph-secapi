@@ -404,17 +404,17 @@ class Output(ActorBaseFT):
             if self.target_product == 'Microsoft Defender ATP':
                 ipset = netaddr.IPSet([str(i) for i in r ])
                 indicators = [str(i) for i in ipset ]
-                LOG.info('DWLOG2: Indicators: %s ', indicators)
+                LOG.info('DWLOG2: Indicators: %s Target: %s', indicators, self.target_product)
             else:
                 indicators = [str(i) for i in r ]
-                LOG.info('DWLOG2: Indicators: %s ', indicators)
+                LOG.info('DWLOG2: Indicators: %s Target: %s', indicators, self.target_product)
         elif type_ == 'IPv4' and '/' in indicator and self.target_product == 'Microsoft Defender ATP':
                 ipset = netaddr.IPSet(indicator)
                 indicators = [str(i) for i in ipset ]
                 LOG.info('DWLOG2: Indicators: %s ', indicators)
         else:
             indicators = [indicator]
-            LOG.info('DWLOG3: Indicators: %s ', indicators)
+            LOG.info('DWLOG3: Indicators: %s Target: %s', indicators, self.target_product)
 
         result = []
         for i in indicators:
@@ -443,7 +443,7 @@ class Output(ActorBaseFT):
                 r['fileHashType'] = HASH_2_ISG[type_]
                 r['fileHashValue'] = i
             elif type_ == 'IPv4':
-                LOG.info('DWLOG: Indicator: %s', i)
+                LOG.info('DWLOG: Indicator: %s Target: %s', indicators, self.target_product)
                 if self.target_product == 'Microsoft Defender ATP':
                     r['networkDestinationIPv4'] = i
                 else: 
