@@ -408,7 +408,7 @@ class Output(ActorBaseFT):
             else:
                 indicators = [str(i) for i in r ]
                 LOG.info('DWLOG2: Indicators: %s ', indicators)
-        if type_ == 'IPv4' and '/' in indicator and self.target_product == 'Microsoft Defender ATP':
+        elif type_ == 'IPv4' and '/' in indicator and self.target_product == 'Microsoft Defender ATP':
                 ipset = netaddr.IPSet(indicator)
                 indicators = [str(i) for i in ipset ]
                 LOG.info('DWLOG2: Indicators: %s ', indicators)
